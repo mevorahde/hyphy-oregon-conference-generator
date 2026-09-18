@@ -10,7 +10,7 @@ public sealed class CliCompositionTests
     public void CliProvidesProductAndStageMetadata()
     {
         Assert.AreEqual("Hyphy Oregon Conference Generator", CliMetadata.ProductName);
-        Assert.AreEqual("1.0.0", CliMetadata.Version);
+        Assert.AreEqual("1.0.1", CliMetadata.Version);
         Assert.AreEqual(
             "Creates fair, reproducible fantasy-football conference assignments.",
             CliMetadata.Description);

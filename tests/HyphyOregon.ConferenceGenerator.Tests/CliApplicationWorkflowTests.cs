@@ -28,7 +28,7 @@ public sealed class CliApplicationWorkflowTests
 
         Assert.AreEqual(ExitCodes.Success, result.ExitCode);
         Assert.AreEqual(
-            "Hyphy Oregon Conference Generator 1.0.0\n",
+            "Hyphy Oregon Conference Generator 1.0.1\n",
             result.StandardOutput);
         Assert.AreEqual(string.Empty, result.StandardError);
     }

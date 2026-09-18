@@ -9,6 +9,9 @@
   <ItemGroup>
     <ProjectReference Include="../HyphyOregon.ConferenceGenerator.Core/HyphyOregon.ConferenceGenerator.Core.csproj" />
   </ItemGroup>
+  <ItemGroup Condition="'$(PublishSingleFile)' == 'true'">
+    <None Include="../../LICENSE" Link="LICENSE" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
   <ItemGroup>
     <None Update="Resources/hyphy-oregon-conference-generator.ico"
           CopyToOutputDirectory="PreserveNewest"

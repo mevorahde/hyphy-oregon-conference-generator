@@ -102,6 +102,40 @@ exactly once and gives every conference the same number of owners.
 
 ## Release archives
 
+### Standalone Windows executable
+
+The upcoming `1.0.1` packaging script also builds `hyphy-oregon-conference-generator-1.0.1-win-x64.exe`
+and its `.sha256` checksum. This is a self-contained, single-file Windows x64
+download: no .NET installation or adjacent DLL/resource files are required.
+The MIT license and application icon resources are included in the bundle.
+It is a local build option pending release publication, not yet a published asset.
+The original folder-based ZIP downloads remain available.
+
+Double-click the executable, complete the prompts, and press Enter when finished
+to close the results. Successful interactive console draws pause before exit;
+command-line arguments and redirected input/output do not pause.
+You can also run it from PowerShell:
+
+```powershell
+& '.\hyphy-oregon-conference-generator-1.0.1-win-x64.exe'
+```
+
+The bundle extracts its contents to the per-user .NET temporary extraction cache
+on launch, so that location must be writable. It is not an installer and does not
+require administrator access. The executable is unsigned; verify its origin and
+checksum before running it. Do not disable Windows security protections.
+
+Build all packages into a new, empty directory:
+
+```powershell
+./eng/Package-Release.ps1 -OutputDirectory artifacts/release
+```
+
+See Microsoft's [single-file deployment documentation](https://learn.microsoft.com/en-us/dotnet/core/deploying/single-file/overview)
+for the runtime extraction behavior.
+
+### Existing portable archives
+
 Version `1.0.0` is the first stable modern release. The manual packaging
 workflow produces two portable ZIP archives:
 
