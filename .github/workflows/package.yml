@@ -34,9 +34,11 @@ jobs:
       - name: Upload reviewed archives and checksums
         uses: actions/upload-artifact@v7
         with:
-          name: hyphy-oregon-conference-generator-1.0.0
+          name: hyphy-oregon-conference-generator-1.0.1
           path: |
             artifacts/release/*.zip
             artifacts/release/*.zip.sha256
+            artifacts/release/*.exe
+            artifacts/release/*.exe.sha256
           if-no-files-found: error
           retention-days: 14

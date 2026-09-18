@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented here.
 
+## [1.0.1] - Unreleased
+
+### Added
+
+- Optional self-contained, single-file Windows x64 executable and SHA-256 checksum,
+  alongside the existing portable archives. Conference assignment logic is unchanged.
+- Packaging rejects single-file output containing any supporting files.
+- Successful interactive console draws wait for Enter so double-click launches
+  keep results visible; redirected and command-line runs do not pause.
+
 ## [1.0.0] - 2026-07-29
 
 ### Added

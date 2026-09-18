@@ -15,11 +15,18 @@ internal static class Program
         try
         {
             CliHost host = CompositionRoot.CreateHost();
-            return await host.RunAsync(
+            int exitCode = await host.RunAsync(
                 args,
                 Console.In,
                 Console.Out,
                 Console.Error,
+                cancellationSource.Token).ConfigureAwait(false);
+            return await InteractiveExitPause.CompleteAsync(
+                exitCode,
+                args.Length == 0,
+                Console.IsInputRedirected || Console.IsOutputRedirected,
+                Console.In,
+                Console.Out,
                 cancellationSource.Token).ConfigureAwait(false);
         }
         finally

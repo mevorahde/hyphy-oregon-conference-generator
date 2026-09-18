@@ -13,7 +13,7 @@ namespace HyphyOregon.ConferenceGenerator.Tests;
 [TestCategory("Stage4")]
 public sealed class Stage4ReleasePolicyTests
 {
-    private const string ReleaseVersion = "1.0.0";
+    private const string ReleaseVersion = "1.0.1";
     private const string ReleaseOutputName = "Hyphy Oregon Conference Generator";
     private const string CanonicalRepositoryUrl =
         "https://github.com/mevorahde/hyphy-oregon-conference-generator";
@@ -36,9 +36,9 @@ public sealed class Stage4ReleasePolicyTests
     {
         Assembly assembly = typeof(CliMetadata).Assembly;
         Assert.AreEqual(ReleaseOutputName, assembly.GetName().Name);
-        Assert.AreEqual(new Version(1, 0, 0, 0), assembly.GetName().Version);
+        Assert.AreEqual(new Version(1, 0, 1, 0), assembly.GetName().Version);
         Assert.AreEqual(
-            "1.0.0.0",
+            "1.0.1.0",
             assembly.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version);
         Assert.AreEqual(
             ReleaseVersion,
@@ -49,8 +49,8 @@ public sealed class Stage4ReleasePolicyTests
         XDocument props = XDocument.Load(PathInRepository("Directory.Build.props"));
         Assert.AreEqual(ReleaseVersion, PropertyValue(props, "Version"));
         Assert.AreEqual(ReleaseVersion, PropertyValue(props, "PackageVersion"));
-        Assert.AreEqual("1.0.0.0", PropertyValue(props, "AssemblyVersion"));
-        Assert.AreEqual("1.0.0.0", PropertyValue(props, "FileVersion"));
+        Assert.AreEqual("1.0.1.0", PropertyValue(props, "AssemblyVersion"));
+        Assert.AreEqual("1.0.1.0", PropertyValue(props, "FileVersion"));
         Assert.AreEqual(ReleaseVersion, PropertyValue(props, "InformationalVersion"));
         Assert.AreEqual(0, props.Descendants("VersionSuffix").Count());
         Assert.AreEqual("true", PropertyValue(props, "TreatWarningsAsErrors"));
@@ -182,6 +182,11 @@ public sealed class Stage4ReleasePolicyTests
             "HyphyOregon.ConferenceGenerator.Cli",
             PropertyValue(project, "RootNamespace"));
         Assert.AreEqual(expectedIcon, PropertyValue(project, "ApplicationIcon"));
+        XElement license = project.Descendants("None")
+            .Single(element => element.Attribute("Include")?.Value == "../../LICENSE");
+        Assert.AreEqual("LICENSE", license.Attribute("Link")?.Value);
+        Assert.AreEqual("PreserveNewest", license.Attribute("CopyToPublishDirectory")?.Value);
+        Assert.AreEqual("'$(PublishSingleFile)' == 'true'", license.Parent?.Attribute("Condition")?.Value);
 
         XElement[] resources = project.Descendants("None")
             .Where(element => element.Attribute("Update") is not null)
@@ -201,6 +206,9 @@ public sealed class Stage4ReleasePolicyTests
             File.ReadAllText(PathInRepository("eng/release-manifest.json")));
         JsonElement root = document.RootElement;
         Assert.AreEqual(ReleaseVersion, root.GetProperty("version").GetString());
+        Assert.AreEqual(
+            $"hyphy-oregon-conference-generator-{ReleaseVersion}-win-x64.exe",
+            root.GetProperty("windowsSingleFile").GetProperty("download").GetString());
 
         string frameworkArchive =
             root.GetProperty("frameworkDependent").GetProperty("archive").GetString()
@@ -211,12 +219,12 @@ public sealed class Stage4ReleasePolicyTests
         StringAssert.Matches(
             frameworkArchive,
             new System.Text.RegularExpressions.Regex(
-                "^hyphy-oregon-conference-generator-1\\.0\\.0-"
+                "^hyphy-oregon-conference-generator-1\\.0\\.1-"
                 + "framework-dependent-any\\.zip$"));
         StringAssert.Matches(
             windowsArchive,
             new System.Text.RegularExpressions.Regex(
-                "^hyphy-oregon-conference-generator-1\\.0\\.0-"
+                "^hyphy-oregon-conference-generator-1\\.0\\.1-"
                 + "win-x64-self-contained\\.zip$"));
         Assert.AreEqual(
             $"{ReleaseOutputName}.dll",
@@ -261,7 +269,11 @@ public sealed class Stage4ReleasePolicyTests
         StringAssert.Contains(script, "$releaseOutputName.runtimeconfig.json");
         StringAssert.Contains(script, "HyphyOregon.ConferenceGenerator.Cli");
         StringAssert.Contains(script, "HyphyOregonConferenceGenerator");
-        Assert.IsFalse(script.Contains("PublishSingleFile", StringComparison.OrdinalIgnoreCase));
+        StringAssert.Contains(script, "-p:PublishSingleFile=true");
+        StringAssert.Contains(script, "-p:IncludeAllContentForSelfExtract=true");
+        StringAssert.Contains(script, "-p:PublishTrimmed=false");
+        StringAssert.Contains(script, "$singleFiles.Count -ne 1");
+        StringAssert.Contains(script, "Test-WindowsPackage.ps1");
         Assert.IsFalse(script.Contains("dotnet pack", StringComparison.OrdinalIgnoreCase));
         Assert.IsFalse(script.Contains("gh release", StringComparison.OrdinalIgnoreCase));
     }
@@ -302,9 +314,11 @@ public sealed class Stage4ReleasePolicyTests
         StringAssert.Contains(workflow, "uses: actions/upload-artifact@v7");
         StringAssert.Contains(
             workflow,
-            "name: hyphy-oregon-conference-generator-1.0.0");
+            "name: hyphy-oregon-conference-generator-1.0.1");
         StringAssert.Contains(workflow, "artifacts/release/*.zip");
         StringAssert.Contains(workflow, "artifacts/release/*.zip.sha256");
+        StringAssert.Contains(workflow, "artifacts/release/*.exe");
+        StringAssert.Contains(workflow, "artifacts/release/*.exe.sha256");
         Assert.IsFalse(workflow.Contains("releases: write", StringComparison.OrdinalIgnoreCase));
         Assert.IsFalse(workflow.Contains("gh release", StringComparison.OrdinalIgnoreCase));
         Assert.IsFalse(workflow.Contains("create-release", StringComparison.OrdinalIgnoreCase));

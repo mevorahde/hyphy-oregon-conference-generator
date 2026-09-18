@@ -134,3 +134,32 @@ Write-Output $frameworkArchive
 Write-Output "$frameworkArchive.sha256"
 Write-Output $windowsArchive
 Write-Output "$windowsArchive.sha256"
+
+# Keep existing folder packages intact; publish the standalone download separately.
+$singleDirectory = Join-Path $resolvedOutput $manifest.windowsSingleFile.rootDirectory
+dotnet publish $project `
+    --configuration Release `
+    --runtime win-x64 `
+    --self-contained true `
+    --output $singleDirectory `
+    -p:PublishSingleFile=true `
+    -p:IncludeAllContentForSelfExtract=true `
+    -p:PublishTrimmed=false `
+    -p:DebugSymbols=false `
+    -p:DebugType=None
+if ($LASTEXITCODE -ne 0) {
+    throw "Single-file Windows publish failed."
+}
+
+$singleFiles = @(Get-ChildItem -LiteralPath $singleDirectory -Recurse -File -Force)
+if ($singleFiles.Count -ne 1 -or $singleFiles[0].Name -ne $manifest.windowsX64.entryPoint) {
+    throw "Single-file output must contain exactly the Windows executable."
+}
+$singleDownload = Join-Path $resolvedOutput $manifest.windowsSingleFile.download
+Copy-Item -LiteralPath $singleFiles[0].FullName -Destination $singleDownload
+& (Join-Path $PSScriptRoot "Test-WindowsPackage.ps1") -Executable $singleDownload
+$hash = (Get-FileHash -LiteralPath $singleDownload -Algorithm SHA256).Hash.ToLowerInvariant()
+Set-Content -LiteralPath "$singleDownload.sha256" `
+    -Value "$hash  $([System.IO.Path]::GetFileName($singleDownload))" -Encoding utf8NoBOM
+Write-Output $singleDownload
+Write-Output "$singleDownload.sha256"
