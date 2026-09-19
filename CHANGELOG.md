@@ -2,7 +2,19 @@
 
 All notable changes to this project are documented here.
 
-## [1.0.1] - Unreleased
+## [Unreleased]
+
+### Fixed
+
+- Restored test discovery after the MSTest framework update by aligning the
+  test adapter to the same `4.4.0` release.
+
+### Documentation
+
+- Updated release, download, changelog, and security-support wording after the
+  `v1.0.1` GitHub Release was published.
+
+## [1.0.1] - 2026-09-18
 
 ### Added
 
