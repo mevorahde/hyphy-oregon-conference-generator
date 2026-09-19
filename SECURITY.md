@@ -2,7 +2,9 @@
 
 ## Supported version
 
-Security fixes are currently considered for the stable `1.0.0` release.
+Security fixes are currently considered for the latest stable `1.0.1` release.
+Version `1.0.0` remains available for historical reference but is not the
+current supported release line.
 
 ## Reporting a vulnerability
 

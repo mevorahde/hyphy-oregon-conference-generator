@@ -303,6 +303,20 @@ public sealed class Stage4ReleasePolicyTests
     }
 
     [TestMethod]
+    public void MstestFrameworkAndAdapterVersionsRemainAligned()
+    {
+        XDocument packages = XDocument.Load(PathInRepository("Directory.Packages.props"));
+        Dictionary<string, string> versions = packages.Descendants("PackageVersion")
+            .ToDictionary(
+                element => element.Attribute("Include")?.Value ?? string.Empty,
+                element => element.Attribute("Version")?.Value ?? string.Empty,
+                StringComparer.Ordinal);
+
+        Assert.AreEqual("4.4.0", versions["MSTest.TestFramework"]);
+        Assert.AreEqual(versions["MSTest.TestFramework"], versions["MSTest.TestAdapter"]);
+    }
+
+    [TestMethod]
     public void PackagingWorkflowIsManualOnlyAndDoesNotPublishARelease()
     {
         string workflow = TestText.ToLf(
@@ -375,7 +389,9 @@ public sealed class Stage4ReleasePolicyTests
                 StringComparison.Ordinal));
         Assert.IsFalse(
             readme.Contains("HyphyOregonConferenceGenerator", StringComparison.Ordinal));
-        StringAssert.Contains(readme, "Version `1.0.0` is the first stable modern release.");
+        StringAssert.Contains(readme, "Version `1.0.0` was the first stable modern release.");
+        StringAssert.Contains(readme, "releases/tag/v1.0.1");
+        Assert.IsFalse(readme.Contains("pending release publication", StringComparison.Ordinal));
         StringAssert.Contains(readme, "manually smoke-tested as `1.0.0-rc.1`");
         StringAssert.Contains(readme, "No bit-for-bit reproducible-build claim is made.");
         StringAssert.Contains(
@@ -386,6 +402,7 @@ public sealed class Stage4ReleasePolicyTests
 
         string changelog = File.ReadAllText(PathInRepository("CHANGELOG.md"));
         StringAssert.Contains(changelog, "## [1.0.0] - 2026-07-29");
+        StringAssert.Contains(changelog, "## [1.0.1] - 2026-09-18");
         StringAssert.Contains(changelog, "## [1.0.0-rc.1] - 2026-07-28");
         StringAssert.Contains(changelog, "first stable modern release metadata");
 

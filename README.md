@@ -104,12 +104,12 @@ exactly once and gives every conference the same number of owners.
 
 ### Standalone Windows executable
 
-The upcoming `1.0.1` packaging script also builds `hyphy-oregon-conference-generator-1.0.1-win-x64.exe`
-and its `.sha256` checksum. This is a self-contained, single-file Windows x64
-download: no .NET installation or adjacent DLL/resource files are required.
+The published [`v1.0.1` release](https://github.com/mevorahde/hyphy-oregon-conference-generator/releases/tag/v1.0.1)
+includes `hyphy-oregon-conference-generator-1.0.1-win-x64.exe` and its `.sha256`
+checksum. This is a self-contained, single-file Windows x64 download: no .NET
+installation or adjacent DLL/resource files are required.
 The MIT license and application icon resources are included in the bundle.
-It is a local build option pending release publication, not yet a published asset.
-The original folder-based ZIP downloads remain available.
+The original folder-based ZIP downloads remain available in the same release.
 
 Double-click the executable, complete the prompts, and press Enter when finished
 to close the results. Successful interactive console draws pause before exit;
@@ -134,10 +134,10 @@ Build all packages into a new, empty directory:
 See Microsoft's [single-file deployment documentation](https://learn.microsoft.com/en-us/dotnet/core/deploying/single-file/overview)
 for the runtime extraction behavior.
 
-### Existing portable archives
+### Portable ZIP alternatives
 
-Version `1.0.0` is the first stable modern release. The manual packaging
-workflow produces two portable ZIP archives:
+Version `1.0.0` was the first stable modern release. The current manual
+packaging workflow also produces two portable ZIP archives:
 
 - Framework-dependent, cross-platform: requires a compatible .NET 10 runtime
   and runs with
@@ -153,13 +153,13 @@ $exe = '.\Hyphy Oregon Conference Generator.exe'
 & $exe --help
 ```
 
-Each archive has a separate SHA-256 checksum file. The Windows executable is
+Each published asset has a separate SHA-256 checksum file. The Windows executable is
 unsigned, so Windows SmartScreen may warn. The Windows x64 self-contained
 package was manually smoke-tested as `1.0.0-rc.1` before promotion. The final
 stable promotion changes release metadata, documentation, the portfolio
 screenshot, and regression expectations without changing application
-behavior. No bit-for-bit reproducible-build claim is made. No release archive
-is published automatically and the workflows do not create a GitHub Release.
+behavior. No bit-for-bit reproducible-build claim is made. Packaging remains a
+manual workflow and does not automatically create or modify a GitHub Release.
 
 ## License and history
 
